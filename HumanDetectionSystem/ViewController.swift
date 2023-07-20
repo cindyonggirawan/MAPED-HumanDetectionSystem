@@ -170,10 +170,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     private func getFromFirebase() {
         let db = Firestore.firestore()
-        
-        let carriageListCollection = db.collection("carriage_list")
-        
-        carriageListCollection.document("carriage-1").collection("history").getDocuments { querySnapshot, error in
+        db.collection("train-1").document("carriage-1").collection("history").getDocuments { querySnapshot, error in
             if let error = error {
                 print("Error getting documents: \(error.localizedDescription)")
                 return
@@ -187,52 +184,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
-//    private func saveToFirebase() {
-//        let db = Firestore.firestore()
-//        let data: [String: Any] = [
-//            "train_id": "123TUTUT",
-//            "carriage_id": "1",
-//            "date": date,
-//            "time": time,
-//            "number_of_passengers": numberOfPassengers,
-//            "outdoor_temperature": outdoorTemperature,
-//            "weather_condition" : condition
-//        ]
-//
-//        let mrtCollection = db.collection("mrt")
-//        documentCount += 1
-//
-//        let formattedNumber: String
-//        if documentCount > 0 && documentCount < 10 {
-//            formattedNumber = String(format: "00%d", documentCount)
-//        } else if documentCount >= 10 && documentCount < 100 {
-//            formattedNumber = String(format: "0%d", documentCount)
-//        } else {
-//            formattedNumber = String(format: "%d", documentCount)
-//        }
-//
-//        let customID = "MRT\(formattedNumber)"
-//
-//        mrtCollection.document(customID).setData(data) { error in
-//            if let error = error {
-//                print("Error saving number of passengers: \(error.localizedDescription)")
-//            } else {
-//                print("Data saved successfully!")
-//            }
-//        }
-//    }
-    
     private func saveToFirebase() {
         let db = Firestore.firestore()
         let data: [String: Any] = [
-            "train_id": "123TUTUT123",
             "date": unixTimeInterval,
             "number_of_passengers": numberOfPassengers,
             "outdoor_temperature": outdoorTemperature,
             "weather_condition" : condition
         ]
         
-        let carriageListCollection = db.collection("carriage_list")
         documentCount += 1
         
         let formattedNumber: String
@@ -246,7 +206,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
         let customID = "\(unixTimeInterval)"
         
-        carriageListCollection.document("carriage-1").collection("history").document(customID).setData(data) { error in
+        db.collection("train-1").document("carriage-1").collection("history").document(customID).setData(data) { error in
             if let error = error {
                 print("Error saving number of passengers: \(error.localizedDescription)")
             } else {
@@ -254,7 +214,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
         
-        carriageListCollection.document("carriage-1").setData(data) { error in
+        db.collection("train-1").document("carriage-1").setData(data) { error in
             if let error = error {
                 print("Error saving number of passengers: \(error.localizedDescription)")
             } else {
@@ -273,24 +233,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         // Create a new timer
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(timerHandler), userInfo: nil, repeats: true)
     }
-
-    // Timer handler function
-//    @objc func timerHandler() {
-//        let currentDate = Date()
-//
-//        dateFormatter.dateFormat = "dd-MM-yyyy"
-//        let dateString = dateFormatter.string(from: currentDate)
-//
-//        dateFormatter.dateFormat = "HH:mm:ss"
-//        let timeString = dateFormatter.string(from: currentDate)
-//
-//        self.date = dateString
-//        self.time = timeString
-//
-//        self.label.text = "Date: \(self.date) \nTime: \(self.time) \nCondition: \(self.condition) \nTemperature: \(self.outdoorTemperature) \nPeople: \(self.numberOfPassengers)"
-//
-//        saveToFirebase()
-//    }
     
     @objc func timerHandler() {
         self.unixTimeInterval = Date().timeIntervalSince1970
